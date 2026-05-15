@@ -30,15 +30,8 @@
       "destination": "https://api.captchaiq.dev/api/v1/$1"
     }
   ],
-  "redirects": [
-    {
-      "source": "/dashboard",
-      "has": [{ "type": "cookie", "key": "sb-wwaghdhnkrzmihcpdklv-auth-token", "missing": true }],
-      "destination": "/login",
-      "permanent": false
-    }
-  ],
   "env": {
+
     "NEXT_PUBLIC_SUPABASE_URL": "@supabase_url",
     "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@supabase_anon_key",
     "NEXT_PUBLIC_APP_URL": "@app_url",
