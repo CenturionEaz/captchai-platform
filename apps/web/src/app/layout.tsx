@@ -19,16 +19,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
         {children}
-        <Toaster
-          position="bottom-right"
-          toastOptions={{
-            style: {
-              background: "rgba(15, 23, 42, 0.95)",
-              border: "1px solid rgba(255,255,255,0.1)",
-              color: "#f8fafc",
-            },
-          }}
-        />
       </body>
     </html>
   );
