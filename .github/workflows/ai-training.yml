@@ -1,0 +1,134 @@
+name: 🐍 AI Model Training Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      model_type:
+        description: "Model to retrain"
+        required: true
+        type: choice
+        options:
+          - ocr-classifier
+          - audio-transcriber
+          - slider-analyzer
+          - challenge-detector
+          - all
+      dataset_version:
+        description: "Dataset version tag"
+        required: false
+        default: "latest"
+  schedule:
+    # Run weekly retraining on Sunday at 2 AM UTC
+    - cron: "0 2 * * 0"
+
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────
+  # VALIDATE TRAINING DATA
+  # ─────────────────────────────────────────────────────────────────────────
+  validate-data:
+    name: 📊 Validate Training Data
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          cd packages/ai-engine
+          pip install -r requirements.txt
+
+      - name: Validate dataset integrity
+        run: |
+          cd packages/ai-engine
+          python scripts/validate_dataset.py --version ${{ github.event.inputs.dataset_version || 'latest' }}
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # TRAIN MODELS
+  # ─────────────────────────────────────────────────────────────────────────
+  train:
+    name: 🧠 Train Model — ${{ matrix.model }}
+    runs-on: ubuntu-latest
+    needs: [validate-data]
+    strategy:
+      matrix:
+        model: ${{ fromJSON(github.event.inputs.model_type == 'all' && '["ocr-classifier","audio-transcriber","slider-analyzer","challenge-detector"]' || format('["{0}"]', github.event.inputs.model_type || 'ocr-classifier')) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install training dependencies
+        run: |
+          cd packages/ai-engine
+          pip install -r requirements.txt
+          pip install -r requirements-training.txt
+
+      - name: Train ${{ matrix.model }}
+        run: |
+          cd packages/ai-engine
+          python scripts/train.py \
+            --model ${{ matrix.model }} \
+            --dataset-version ${{ github.event.inputs.dataset_version || 'latest' }} \
+            --output-dir models/${{ matrix.model }}/latest
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          HF_TOKEN: ${{ secrets.HUGGINGFACE_TOKEN }}
+
+      - name: Evaluate model
+        run: |
+          cd packages/ai-engine
+          python scripts/evaluate.py \
+            --model ${{ matrix.model }} \
+            --model-path models/${{ matrix.model }}/latest \
+            --output metrics/${{ matrix.model }}.json
+
+      - name: Upload model artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-${{ matrix.model }}
+          path: |
+            packages/ai-engine/models/${{ matrix.model }}/
+            packages/ai-engine/metrics/${{ matrix.model }}.json
+          retention-days: 30
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # PUBLISH MODEL REGISTRY
+  # ─────────────────────────────────────────────────────────────────────────
+  publish:
+    name: 📤 Publish to Model Registry
+    runs-on: ubuntu-latest
+    needs: [train]
+    if: github.event_name == 'schedule' || github.event.inputs.model_type == 'all'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all model artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: model-*
+          path: packages/ai-engine/trained/
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Publish models to HuggingFace Hub
+        run: |
+          cd packages/ai-engine
+          pip install huggingface_hub
+          python scripts/publish_models.py --dir trained/
+        env:
+          HF_TOKEN: ${{ secrets.HUGGINGFACE_TOKEN }}
+          HF_REPO: ${{ secrets.HUGGINGFACE_REPO }}

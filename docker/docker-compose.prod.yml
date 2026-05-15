@@ -1,0 +1,143 @@
+version: "3.9"
+
+# ─── Production Docker Compose ────────────────────────────────────────────────
+# Usage: docker compose -f docker/docker-compose.prod.yml up -d
+# Requires: .env file with all production secrets
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: captchaiq-postgres-prod
+    restart: always
+    environment:
+      POSTGRES_USER: captchaiq
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: captchaiq
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks: [internal]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U captchaiq -d captchaiq"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 2G
+
+  redis:
+    image: redis:7-alpine
+    container_name: captchaiq-redis-prod
+    restart: always
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    networks: [internal]
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    image: ghcr.io/OWNER/captchaiq-api:${VERSION:-latest}
+    build:
+      context: ../apps/api
+      target: production
+    container_name: captchaiq-api-prod
+    restart: always
+    env_file: ../.env.production
+    environment:
+      - ENVIRONMENT=production
+      - DATABASE_URL=postgresql://captchaiq:${POSTGRES_PASSWORD}@postgres:5432/captchaiq
+      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379
+    networks: [internal, external]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: rolling-update
+      resources:
+        limits:
+          cpus: "2"
+          memory: 4G
+
+  web:
+    image: ghcr.io/OWNER/captchaiq-web:${VERSION:-latest}
+    build:
+      context: ../apps/web
+      target: production
+      args:
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+    container_name: captchaiq-web-prod
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=https://api.captchaiq.dev
+    networks: [external]
+    depends_on: [api]
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+
+  nginx:
+    image: nginx:alpine
+    container_name: captchaiq-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - certbot_data:/var/www/certbot
+    networks: [external]
+    depends_on: [web, api]
+
+  certbot:
+    image: certbot/certbot
+    container_name: captchaiq-certbot
+    volumes:
+      - certbot_data:/var/www/certbot
+      - certbot_certs:/etc/letsencrypt
+    command: certonly --webroot -w /var/www/certbot --email ${ADMIN_EMAIL} -d captchaiq.dev -d api.captchaiq.dev --agree-tos --non-interactive
+    profiles:
+      - ssl
+
+  # Watchtower — auto-pull new image versions in production
+  watchtower:
+    image: containrrr/watchtower
+    container_name: captchaiq-watchtower
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 300 --cleanup captchaiq-api-prod captchaiq-web-prod
+    profiles:
+      - autoupdate
+
+volumes:
+  postgres_data:
+  redis_data:
+  certbot_data:
+  certbot_certs:
+
+networks:
+  internal:
+    internal: true
+  external:

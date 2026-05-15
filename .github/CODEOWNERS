@@ -1,0 +1,40 @@
+# CODEOWNERS — CaptchaIQ Platform
+# Each line defines a pattern and the owner(s) who are auto-requested for review.
+# Order matters: the LAST matching pattern takes precedence.
+# Docs: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# ─── Global Default ───────────────────────────────────────────────────────────
+# All files not matched below require review from the primary maintainer
+*                           @OWNER_USERNAME
+
+# ─── Legal & License ──────────────────────────────────────────────────────────
+LICENSE                     @OWNER_USERNAME
+DISCLAIMER.md               @OWNER_USERNAME
+ETHICS.md                   @OWNER_USERNAME
+ACCEPTABLE_USE.md           @OWNER_USERNAME
+SECURITY.md                 @OWNER_USERNAME
+
+# ─── CI/CD & DevOps ───────────────────────────────────────────────────────────
+.github/                    @OWNER_USERNAME
+docker/                     @OWNER_USERNAME
+k8s/                        @OWNER_USERNAME
+
+# ─── Web Application ──────────────────────────────────────────────────────────
+apps/web/                   @OWNER_USERNAME
+
+# ─── AI/ML Backend ────────────────────────────────────────────────────────────
+apps/api/                   @OWNER_USERNAME
+packages/ai-engine/         @OWNER_USERNAME
+
+# ─── Browser Extension ────────────────────────────────────────────────────────
+apps/extension/             @OWNER_USERNAME
+
+# ─── Shared Packages ──────────────────────────────────────────────────────────
+packages/                   @OWNER_USERNAME
+
+# ─── Database ─────────────────────────────────────────────────────────────────
+supabase/                   @OWNER_USERNAME
+
+# ─── Documentation ────────────────────────────────────────────────────────────
+docs/                       @OWNER_USERNAME
+README.md                   @OWNER_USERNAME

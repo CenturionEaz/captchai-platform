@@ -1,0 +1,144 @@
+version: 2
+updates:
+  # ─── Web App (Next.js) ────────────────────────────────────────────────────
+  - package-ecosystem: "npm"
+    directory: "/apps/web"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "OWNER_USERNAME"
+    labels:
+      - "dependencies"
+      - "automated"
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      react-ecosystem:
+        patterns:
+          - "react*"
+          - "@types/react*"
+          - "next*"
+      ui-libraries:
+        patterns:
+          - "@radix-ui/*"
+          - "framer-motion"
+          - "lucide-react"
+          - "recharts"
+          - "tailwindcss"
+      testing:
+        patterns:
+          - "vitest*"
+          - "@testing-library/*"
+          - "playwright*"
+
+  # ─── API Backend (Python) ─────────────────────────────────────────────────
+  - package-ecosystem: "pip"
+    directory: "/apps/api"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "OWNER_USERNAME"
+    labels:
+      - "dependencies"
+      - "python"
+      - "automated"
+    commit-message:
+      prefix: "chore(deps)"
+
+  # ─── AI Engine (Python) ───────────────────────────────────────────────────
+  - package-ecosystem: "pip"
+    directory: "/packages/ai-engine"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "OWNER_USERNAME"
+    labels:
+      - "dependencies"
+      - "ai-ml"
+      - "automated"
+    commit-message:
+      prefix: "chore(deps)"
+
+  # ─── Browser Extension ────────────────────────────────────────────────────
+  - package-ecosystem: "npm"
+    directory: "/apps/extension"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "OWNER_USERNAME"
+    labels:
+      - "dependencies"
+      - "extension"
+      - "automated"
+    commit-message:
+      prefix: "chore(deps)"
+
+  # ─── Root Monorepo ────────────────────────────────────────────────────────
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "OWNER_USERNAME"
+    labels:
+      - "dependencies"
+      - "monorepo"
+      - "automated"
+    commit-message:
+      prefix: "chore(deps)"
+
+  # ─── GitHub Actions ───────────────────────────────────────────────────────
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "thursday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "OWNER_USERNAME"
+    labels:
+      - "dependencies"
+      - "ci-cd"
+      - "automated"
+    commit-message:
+      prefix: "chore(ci)"
+
+  # ─── Docker ───────────────────────────────────────────────────────────────
+  - package-ecosystem: "docker"
+    directory: "/docker"
+    schedule:
+      interval: "weekly"
+      day: "friday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "OWNER_USERNAME"
+    labels:
+      - "dependencies"
+      - "docker"
+      - "automated"
+    commit-message:
+      prefix: "chore(docker)"
