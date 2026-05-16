@@ -59,7 +59,7 @@ export default function HomePage() {
             <span className="badge-cyan ml-2 text-[10px]">RESEARCH</span>
           </div>
           <div className="flex items-center gap-3">
-            <a href="https://github.com/OWNER/captchaiq-platform" target="_blank" rel="noopener noreferrer" className="btn-ghost text-xs">
+            <a href="https://github.com/CenturionEaz/captchai-platform" target="_blank" rel="noopener noreferrer" className="btn-ghost text-xs">
               <Github className="w-4 h-4" /> GitHub
             </a>
             <Link href="/dashboard" className="btn-primary text-xs">
@@ -94,7 +94,7 @@ export default function HomePage() {
             <Link href="/dashboard" className="btn-primary px-8 py-3 text-base">
               Open Research Dashboard <ArrowRight className="w-4 h-4" />
             </Link>
-            <a href="https://github.com/OWNER/captchaiq-platform" target="_blank" rel="noopener noreferrer" className="btn-secondary px-8 py-3 text-base">
+            <a href="https://github.com/CenturionEaz/captchai-platform" target="_blank" rel="noopener noreferrer" className="btn-secondary px-8 py-3 text-base">
               <Github className="w-4 h-4" /> View on GitHub
             </a>
           </motion.div>
@@ -179,7 +179,7 @@ export default function HomePage() {
             <span className="text-slate-600 text-xs">© 2024 Pratyaksh</span>
           </div>
           <div className="flex items-center gap-6 text-xs text-slate-500">
-            <a href="https://github.com/OWNER/captchaiq-platform" className="hover:text-slate-300 transition-colors">GitHub</a>
+            <a href="https://github.com/CenturionEaz/captchai-platform" className="hover:text-slate-300 transition-colors">GitHub</a>
             <a href="/docs" className="hover:text-slate-300 transition-colors">Docs</a>
             <Link href="/dashboard" className="hover:text-cyan-400 transition-colors">Dashboard</Link>
           </div>

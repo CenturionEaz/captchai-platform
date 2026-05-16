@@ -7,7 +7,7 @@
   "license": "SEE LICENSE IN LICENSE",
   "repository": {
     "type": "git",
-    "url": "https://github.com/OWNER/captchaiq-platform.git"
+    "url": "https://github.com/CenturionEaz/captchai-platform.git"
   },
   "engines": {
     "node": ">=20.0.0",

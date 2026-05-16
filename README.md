@@ -7,7 +7,7 @@
 
 ### AI-Powered CAPTCHA Intelligence Research Platform
 
-[![CI](https://github.com/OWNER/captchaiq-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/captchaiq-platform/actions/workflows/ci.yml)
+[![CI](https://github.com/CenturionEaz/captchai-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/CenturionEaz/captchai-platform/actions/workflows/ci.yml)
 [![License: Custom Educational](https://img.shields.io/badge/License-Educational%20Research-blue.svg)](./LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![Python](https://img.shields.io/badge/Python-3.11-green?logo=python)](https://python.org)
@@ -19,7 +19,7 @@
 
 **A production-grade, self-learning AI research environment for studying CAPTCHA robustness, adversarial machine learning, and accessibility.**
 
-[🚀 Live Demo](#) · [📖 Documentation](#documentation) · [🔬 Research](#ai-pipeline) · [💬 Discussions](https://github.com/OWNER/captchaiq-platform/discussions)
+[🚀 Live Demo](#) · [📖 Documentation](#documentation) · [🔬 Research](#ai-pipeline) · [💬 Discussions](https://github.com/CenturionEaz/captchai-platform/discussions)
 
 </div>
 
@@ -209,7 +209,7 @@ User Upload → Challenge Detector → Route to Pipeline
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/OWNER/captchaiq-platform.git
+git clone https://github.com/CenturionEaz/captchai-platform.git
 cd captchaiq-platform
 
 # 2. Copy environment template
@@ -232,7 +232,7 @@ docker compose -f docker/docker-compose.dev.yml up -d
 
 ```bash
 # 1. Clone
-git clone https://github.com/OWNER/captchaiq-platform.git
+git clone https://github.com/CenturionEaz/captchai-platform.git
 cd captchaiq-platform
 
 # 2. Install Node dependencies

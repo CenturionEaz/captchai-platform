@@ -3,7 +3,7 @@
   "name": "CaptchaIQ Research Assistant",
   "version": "1.0.0",
   "description": "AI-powered CAPTCHA challenge detection and research overlay. For authorized security research and educational use only.",
-  "homepage_url": "https://github.com/OWNER/captchaiq-platform",
+  "homepage_url": "https://github.com/CenturionEaz/captchai-platform",
   "icons": {
     "16": "icons/icon16.png",
     "32": "icons/icon32.png",
@@ -24,8 +24,12 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["content/detector.js"],
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content/detector.js"
+      ],
       "run_at": "document_idle",
       "all_frames": false
     }
@@ -40,8 +44,13 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["content/overlay.css", "content/overlay.html"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "content/overlay.css",
+        "content/overlay.html"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ],
   "content_security_policy": {

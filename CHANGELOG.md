@@ -120,5 +120,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[2.0.0]: https://github.com/OWNER/captchaiq-platform/compare/v1.0.0...v2.0.0
-[1.0.0]: https://github.com/OWNER/captchaiq-platform/releases/tag/v1.0.0
+[2.0.0]: https://github.com/CenturionEaz/captchai-platform/compare/v1.0.0...v2.0.0
+[1.0.0]: https://github.com/CenturionEaz/captchai-platform/releases/tag/v1.0.0
