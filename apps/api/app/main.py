@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 import uvicorn
@@ -22,9 +22,14 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     """Application lifespan — startup and shutdown events."""
     logger.info("🚀 CaptchaIQ API starting up...")
+
+    # Validate configuration — warns on missing vars, never crashes
+    settings.validate_startup()
+
     await init_db()
-    logger.info("✅ Database initialized")
     logger.info(f"🔧 Environment: {settings.ENVIRONMENT}")
+    logger.info(f"🌐 CORS origins: {settings.allowed_origins_list}")
+    logger.info("✅ CaptchaIQ API ready")
     yield
     logger.info("👋 CaptchaIQ API shutting down...")
 
@@ -43,12 +48,13 @@ app = FastAPI(
 )
 
 # ─── Middleware ───────────────────────────────────────────────────────────────
+# Order matters — outermost middleware wraps the rest
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 app.add_middleware(RequestLoggingMiddleware)
 app.add_middleware(RateLimitMiddleware)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.ALLOWED_ORIGINS,
+    allow_origins=settings.allowed_origins_list,  # parsed list, not raw string
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH"],
     allow_headers=["*"],
@@ -60,7 +66,11 @@ app.include_router(api_router, prefix="/api/v1")
 
 @app.get("/health", tags=["System"])
 async def health_check():
-    """Public health check endpoint for load balancers and monitoring."""
+    """
+    Public health check endpoint.
+    Used by Render to verify the app is running.
+    Returns immediately — no DB calls, no auth.
+    """
     return {
         "status": "healthy",
         "version": "1.0.0",
@@ -70,12 +80,14 @@ async def health_check():
 
 @app.get("/", tags=["System"])
 async def root():
+    """API root — returns basic platform info."""
     return {
         "name": "CaptchaIQ Platform API",
         "version": "1.0.0",
         "purpose": "AI CAPTCHA research — Educational use only",
         "docs": "/docs",
         "health": "/health",
+        "api": "/api/v1",
     }
 
 

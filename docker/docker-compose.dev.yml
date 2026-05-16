@@ -1,112 +1,69 @@
 version: "3.9"
 
+# ─── CaptchaIQ Local Development Stack ───────────────────────────────────────
+#
+# Usage:
+#   cp .env.example .env.docker
+#   docker compose -f docker/docker-compose.dev.yml up
+#
+# Services:
+#   - api  → FastAPI backend  → http://localhost:8000
+#   - web  → Next.js frontend → http://localhost:3000
+#
+# Database/Auth: Supabase (cloud — set env vars in .env.docker)
+# No local Postgres or Redis required.
+# ─────────────────────────────────────────────────────────────────────────────
+
 services:
-  # ─── PostgreSQL Database ───────────────────────────────────────────────────
-  postgres:
-    image: pgvector/pgvector:pg16
-    container_name: captchaiq-postgres
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: captchaiq
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dev_password_change_me}
-      POSTGRES_DB: captchaiq
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./supabase/migrations:/docker-entrypoint-initdb.d
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U captchaiq -d captchaiq"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # ─── Redis (rate limiting & job queue) ────────────────────────────────────
-  redis:
-    image: redis:7-alpine
-    container_name: captchaiq-redis
-    restart: unless-stopped
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    command: redis-server --appendonly yes
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # ─── FastAPI Backend ───────────────────────────────────────────────────────
+  # ─── FastAPI Backend ─────────────────────────────────────────────────────────
   api:
     build:
-      context: ./apps/api
+      context: ../apps/api
       dockerfile: Dockerfile
-      target: development
     container_name: captchaiq-api
     restart: unless-stopped
     ports:
       - "8000:8000"
     volumes:
-      - ./apps/api:/app
+      - ../apps/api:/app
       - model_cache:/app/models
+      - uploads:/app/uploads
+    env_file:
+      - ../.env.docker
     environment:
       - ENVIRONMENT=development
-      - DATABASE_URL=postgresql://captchaiq:${POSTGRES_PASSWORD:-dev_password_change_me}@postgres:5432/captchaiq
-      - REDIS_URL=redis://redis:6379
-      - SECRET_KEY=${SECRET_KEY:-dev-secret-key-change-in-production}
-      - SUPABASE_URL=${SUPABASE_URL:-}
-      - SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY:-}
-      - HF_TOKEN=${HF_TOKEN:-}
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 15s
 
-  # ─── Next.js Frontend ─────────────────────────────────────────────────────
+  # ─── Next.js Frontend ────────────────────────────────────────────────────────
   web:
     build:
-      context: ./apps/web
+      context: ../apps/web
       dockerfile: Dockerfile
-      target: development
     container_name: captchaiq-web
     restart: unless-stopped
     ports:
       - "3000:3000"
     volumes:
-      - ./apps/web:/app
+      - ../apps/web:/app
       - /app/node_modules
       - /app/.next
+    env_file:
+      - ../.env.docker
     environment:
       - NODE_ENV=development
-      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL:-}
-      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY:-}
       - NEXT_PUBLIC_API_URL=http://localhost:8000
     depends_on:
-      - api
-
-  # ─── Adminer (DB GUI for dev) ─────────────────────────────────────────────
-  adminer:
-    image: adminer:latest
-    container_name: captchaiq-adminer
-    restart: unless-stopped
-    ports:
-      - "8080:8080"
-    profiles:
-      - tools
-    depends_on:
-      - postgres
+      api:
+        condition: service_healthy
 
 volumes:
-  postgres_data:
-  redis_data:
   model_cache:
+  uploads:
 
 networks:
   default:

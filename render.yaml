@@ -1,0 +1,46 @@
+# render.yaml — Render deployment configuration for CaptchaIQ API
+# Docs: https://render.com/docs/blueprint-spec
+#
+# Usage: Connect this repo in Render dashboard → it auto-detects this file.
+
+services:
+  - type: web
+    name: captchaiq-api
+    runtime: python
+    rootDir: apps/api
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1 --loop asyncio
+    plan: free
+    region: oregon
+    branch: main
+    healthCheckPath: /health
+    autoDeploy: true
+
+    envVars:
+      # ── App ─────────────────────────────────────────────────────────────
+      - key: ENVIRONMENT
+        value: production
+
+      # ── Supabase (fill in Render dashboard) ─────────────────────────────
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        sync: false   # set manually in Render dashboard
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+
+      # ── HuggingFace (fill in Render dashboard) ───────────────────────────
+      - key: HF_TOKEN
+        sync: false
+
+      # ── CORS — update with your Vercel URL ──────────────────────────────
+      - key: ALLOWED_ORIGINS
+        value: '["https://your-app.vercel.app","http://localhost:3000"]'
+
+      # ── Auth ─────────────────────────────────────────────────────────────
+      - key: SECRET_KEY
+        generateValue: true   # Render auto-generates a secure random value
+
+      # ── Email (optional) ─────────────────────────────────────────────────
+      - key: RESEND_API_KEY
+        sync: false

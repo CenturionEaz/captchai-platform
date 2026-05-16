@@ -1,23 +1,46 @@
-fastapi>=0.110.0
-uvicorn[standard]>=0.27.0
-pydantic>=2.6.0
-pydantic-settings>=2.2.0
+# ─── CaptchaIQ API — Production Requirements ─────────────────────────────────
+#
+# Render Free Tier optimized:
+# - NO torch (2GB+, will OOM on free tier)
+# - NO openai-whisper (requires torch)
+# - NO redis (using in-memory rate limiting)
+# - NO sqlalchemy/asyncpg/alembic (Supabase handles DB)
+# - Pillow + numpy for image processing
+# - opencv-python-headless for computer vision (~30MB)
+# - HuggingFace API calls for heavy models (no local weights)
+#
+# Install: pip install -r requirements.txt
+
+# ─── Core Framework ───────────────────────────────────────────────────────────
+fastapi>=0.110.0,<1.0.0
+uvicorn[standard]>=0.27.0,<1.0.0
 python-multipart>=0.0.9
-sqlalchemy>=2.0.27
-asyncpg>=0.29.0
-alembic>=1.13.1
-redis>=5.0.1
-pytesseract>=0.3.10
+
+# ─── Data Validation ──────────────────────────────────────────────────────────
+pydantic[email]>=2.6.0,<3.0.0
+pydantic-settings>=2.2.0,<3.0.0
+email-validator>=2.1.0
+
+# ─── HTTP Client ──────────────────────────────────────────────────────────────
+httpx>=0.27.0,<1.0.0
+
+# ─── Image Processing (CPU only, Render safe) ─────────────────────────────────
 Pillow>=10.2.0
-opencv-python-headless>=4.9.0
 numpy>=1.26.4
-openai-whisper>=20231117
-transformers>=4.38.0
-torch>=2.2.0
-huggingface-hub>=0.21.0
+opencv-python-headless>=4.9.0
+
+# ─── Supabase ─────────────────────────────────────────────────────────────────
 supabase>=2.3.4
+
+# ─── Auth / JWT ───────────────────────────────────────────────────────────────
 python-jose[cryptography]>=3.3.0
 passlib[bcrypt]>=1.7.4
-httpx>=0.27.0
-sentry-sdk[fastapi]>=1.40.6
-structlog>=24.1.0
+
+# ─── Environment ──────────────────────────────────────────────────────────────
+python-dotenv>=1.0.0
+
+# ─── Email (optional — degrades gracefully if RESEND_API_KEY not set) ─────────
+# httpx already handles this
+
+# ─── HuggingFace Hub (for model metadata only — no local weights) ─────────────
+huggingface-hub>=0.21.0
