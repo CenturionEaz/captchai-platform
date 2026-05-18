@@ -9,7 +9,7 @@ const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jet
 export const metadata: Metadata = {
   title: { template: "%s | CaptchaIQ", default: "CaptchaIQ — AI CAPTCHA Intelligence Research" },
   description: "Advanced AI-powered CAPTCHA research platform for educational and security research purposes.",
-  authors: [{ name: "Pratyaksh" }],
+  authors: [{ name: "Pratyush" }],
 };
 
 export const viewport: Viewport = { themeColor: "#020617" };

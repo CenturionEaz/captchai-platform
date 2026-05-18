@@ -138,4 +138,4 @@ We will not pursue legal action against researchers who:
 
 ---
 
-*Security Policy Version 1.0 | Copyright (c) 2024 Pratyaksh*
+*Security Policy Version 1.0 | Copyright (c) 2026 Pratyush*

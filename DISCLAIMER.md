@@ -107,5 +107,5 @@ Before using this software against any system, verify:
 
 ---
 
-*Copyright (c) 2024 Pratyaksh. All rights reserved.*
+*Copyright (c) 2026 Pratyush. All rights reserved.*
 *This disclaimer is part of the project and must not be removed.*

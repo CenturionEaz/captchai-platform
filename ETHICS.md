@@ -124,4 +124,4 @@ We take all ethical concerns seriously and will respond within 72 hours.
 
 ---
 
-*Last updated: 2024 | Copyright (c) 2024 Pratyaksh — This document must be preserved in all derivatives.*
+*Last updated: 2024 | Copyright (c) 2026 Pratyush — This document must be preserved in all derivatives.*

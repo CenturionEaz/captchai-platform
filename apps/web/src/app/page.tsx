@@ -176,7 +176,7 @@ export default function HomePage() {
           <div className="flex items-center gap-2">
             <Eye className="w-4 h-4 text-cyan-400" />
             <span className="text-slate-400 text-sm">CaptchaIQ Platform</span>
-            <span className="text-slate-600 text-xs">© 2024 Pratyaksh</span>
+            <span className="text-slate-600 text-xs">© 2026 Pratyush</span>
           </div>
           <div className="flex items-center gap-6 text-xs text-slate-500">
             <a href="https://github.com/CenturionEaz/captchai-platform" className="hover:text-slate-300 transition-colors">GitHub</a>

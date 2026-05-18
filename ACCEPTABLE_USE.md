@@ -114,4 +114,4 @@ If you are unsure whether a specific use case is permitted, open a GitHub Discus
 
 ---
 
-*Copyright (c) 2024 Pratyaksh. This document must be preserved in all forks and derivatives.*
+*Copyright (c) 2026 Pratyush. This document must be preserved in all forks and derivatives.*

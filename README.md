@@ -467,7 +467,7 @@ git push origin feature/your-feature
 
 <div align="center">
 
-**Copyright (c) 2024 Pratyaksh — All Rights Reserved**
+**Copyright (c) 2026 Pratyush — All Rights Reserved**
 
 Built with ❤️ for AI research, accessibility, and education.
 
